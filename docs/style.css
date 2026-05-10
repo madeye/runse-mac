@@ -1,35 +1,43 @@
 /* Runse for macOS landing — single stylesheet, no build step. */
 
 :root {
-  --bg: #ffffff;
-  --bg-alt: #f6f6f8;
-  --fg: #1a1a1f;
-  --fg-soft: #4a4a55;
-  --fg-muted: #7a7a85;
-  --accent: #5e5ce6;        /* iOS systemIndigo */
-  --accent-soft: #ebeaff;
-  --border: #e6e6ec;
-  --code-bg: #f3f3f7;
-  --terminal-bg: #1f1f27;
-  --terminal-fg: #e8e8ee;
-  --terminal-dim: #888894;
-  --terminal-key: #ffd60a;
-  --terminal-accent: #69c2ff;
-  --shadow: 0 24px 64px -32px rgba(40, 40, 80, 0.18);
+  /* Light: cream parchment world with deep-forest ink, mint+gold accents.
+     Pulled from the app icon: forest #143228, cream #EFE7D2,
+     mint #A8CDB5, gold #D2A85F. */
+  --bg: #FAF7EE;
+  --bg-alt: #F1ECDA;
+  --fg: #143228;
+  --fg-soft: #355146;
+  --fg-muted: #6E7F72;
+  --accent: #1D4538;            /* deep forest — links and primary button */
+  --accent-soft: #E2EDDB;       /* pale mint chip background */
+  --accent-warm: #B6873B;       /* rich gold — em emphasis, kept readable */
+  --mint: #A8CDB5;
+  --gold: #D2A85F;
+  --border: #E0D7BD;
+  --code-bg: #EFE7D2;
+  --terminal-bg: #143228;
+  --terminal-fg: #EFE7D2;
+  --terminal-dim: #8FA298;
+  --terminal-key: #D2A85F;
+  --terminal-accent: #A8CDB5;
+  --shadow: 0 24px 64px -32px rgba(20, 50, 40, 0.28);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0e0e12;
-    --bg-alt: #16161c;
-    --fg: #f3f3f7;
-    --fg-soft: #c0c0ca;
-    --fg-muted: #80808d;
-    --accent: #8a87ff;
-    --accent-soft: #1f1d4a;
-    --border: #2a2a32;
-    --code-bg: #1a1a22;
-    --shadow: 0 24px 64px -32px rgba(0, 0, 0, 0.6);
+    --bg: #143228;
+    --bg-alt: #1A3D31;
+    --fg: #EFE7D2;
+    --fg-soft: #CFDCC9;
+    --fg-muted: #8FA298;
+    --accent: #A8CDB5;          /* mint pebble — links and primary button */
+    --accent-soft: rgba(168, 205, 181, 0.14);
+    --accent-warm: #D2A85F;     /* gold pebble — em emphasis */
+    --border: #2A5A48;
+    --code-bg: #0F2A22;
+    --shadow: 0 24px 64px -32px rgba(0, 0, 0, 0.55);
+    --btn-primary-fg: #143228;  /* forest text on mint button in dark mode */
   }
 }
 
@@ -106,8 +114,8 @@ a:hover { text-decoration: underline; }
 .hero {
   padding: 80px 0 60px;
   background:
-    radial-gradient(circle at 20% 0%, var(--accent-soft), transparent 60%),
-    radial-gradient(circle at 100% 30%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 50%);
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--mint) 38%, transparent), transparent 55%),
+    radial-gradient(circle at 100% 28%, color-mix(in srgb, var(--gold) 28%, transparent), transparent 50%);
 }
 .hero-inner { text-align: center; }
 .eyebrow {
@@ -115,9 +123,12 @@ a:hover { text-decoration: underline; }
   margin: 0 0 18px;
   padding: 4px 12px;
   font-size: 13px;
-  font-weight: 500;
-  color: var(--accent);
-  background: var(--accent-soft);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gold) 38%, transparent);
   border-radius: 999px;
 }
 h1 {
@@ -133,7 +144,7 @@ h1 {
   font-size: 19px;
   color: var(--fg-soft);
 }
-.lede em { font-style: italic; color: var(--accent); }
+.lede em { font-style: italic; color: var(--accent-warm); }
 
 .cta-row {
   display: flex;
@@ -154,8 +165,8 @@ h1 {
 .btn:hover { text-decoration: none; transform: translateY(-1px); }
 .btn-primary {
   background: var(--accent);
-  color: #fff;
-  box-shadow: 0 6px 20px -8px var(--accent);
+  color: var(--btn-primary-fg, #EFE7D2);
+  box-shadow: 0 6px 20px -8px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 .btn-primary:hover { background: color-mix(in srgb, var(--accent) 88%, black); }
 .btn-secondary {
@@ -236,8 +247,18 @@ h2 {
   box-shadow: var(--shadow);
 }
 .card-icon {
-  font-size: 30px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
   margin-bottom: 14px;
+  font-size: 22px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--mint) 70%, transparent),
+    color-mix(in srgb, var(--gold) 60%, transparent));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #EFE7D2 60%, transparent),
+              0 6px 14px -8px color-mix(in srgb, var(--gold) 50%, transparent);
 }
 .card h3 {
   margin: 0 0 8px;
@@ -328,17 +349,18 @@ kbd {
   content: "✓";
   position: absolute;
   left: 0;
-  top: 10px;
+  top: 12px;
   width: 22px;
   height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent);
-  font-weight: 700;
-  font-size: 14px;
-  background: var(--accent-soft);
+  color: #143228;
+  font-weight: 800;
+  font-size: 13px;
+  background: var(--mint, var(--accent));
   border-radius: 50%;
+  box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--mint, var(--accent)) 60%, transparent);
 }
 .checklist strong { color: var(--fg); }
 
