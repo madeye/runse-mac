@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Runse for macOS — Refine and translate any selected text</title>
+  <meta name="description" content="A macOS app that refines and translates selected text in any app, with global hotkeys, a Services menu integration, and a floating PopClip-style action bar. Bring your own OpenAI, Anthropic, or NVIDIA provider.">
+  <meta name="theme-color" content="#5e5ce6">
+  <meta property="og:title" content="Runse for macOS">
+  <meta property="og:description" content="Refine and translate selected text in any macOS app — global hotkeys, Services menu, and a floating action bar over your selection.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://madeye.github.io/runse-mac/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='80'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="#" class="brand">
+      <span class="brand-mark">✨</span>
+      <span>Runse</span>
+    </a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="#privacy">Privacy</a>
+      <a href="https://github.com/madeye/runse-mac" class="external">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <p class="eyebrow">macOS · MIT licensed · Notarized</p>
+    <h1>Refine and translate any selected text, anywhere.</h1>
+    <p class="lede">
+      Runse turns your selection in <em>any</em> macOS app into a one-keystroke prompt to the LLM provider of your choice.
+      No copy-paste. No browser tab. No vendor lock-in.
+    </p>
+    <div class="cta-row">
+      <a href="https://github.com/madeye/runse-mac" class="btn btn-primary">View on GitHub</a>
+      <a href="https://github.com/madeye/runse-mac#installation" class="btn btn-secondary">Build from source</a>
+    </div>
+    <div class="hero-art">
+      <pre class="terminal" aria-hidden="true">
+<span class="t-dim">Notes › selected text:</span>
+"hey there friend, how are u doing today"
+
+<span class="t-key">⌃⌥R</span> <span class="t-dim">Refine</span>
+       │
+       ▼
+┌──────────────────────────────────────┐
+│ <span class="t-accent">Hello there, friend! How are you</span>     │
+│ <span class="t-accent">doing today?</span>                         │
+│                                      │
+│ <span class="t-dim">[Copy]   [Run]</span>                       │
+└──────────────────────────────────────┘
+      </pre>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="section">
+  <div class="container">
+    <h2>Four ways in. One transform window.</h2>
+    <p class="section-lede">Pick whichever flow feels least invasive — they all open the same window over the same provider.</p>
+    <div class="features">
+      <article class="card">
+        <div class="card-icon">⌨️</div>
+        <h3>Global hotkeys</h3>
+        <p><kbd>⌃⌥R</kbd> to refine, <kbd>⌃⌥T</kbd> to translate. Reads selected text directly via the Accessibility API — no clipboard, no pasteboard prompts.</p>
+      </article>
+      <article class="card">
+        <div class="card-icon">🪄</div>
+        <h3>Floating action bar</h3>
+        <p>A tiny PopClip-style popover appears next to your selection with Refine and Translate buttons. Toggle it off whenever it gets in the way.</p>
+      </article>
+      <article class="card">
+        <div class="card-icon">🖱️</div>
+        <h3>Services menu</h3>
+        <p>Right-click any selection → Services → <em>Runse Refine</em> / <em>Runse Translate</em>. Works in Mail, Notes, Safari, Xcode, and most Cocoa text views.</p>
+      </article>
+      <article class="card">
+        <div class="card-icon">📍</div>
+        <h3>Menu bar item</h3>
+        <p>An always-visible wand icon for users who'd rather click than memorize a hotkey. Quit and "Open Runse…" live here too.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <h2>Bring your own provider.</h2>
+    <p class="section-lede">Runse speaks the four most common LLM API shapes. Drop in a base URL, paste an API key, hit Test.</p>
+    <div class="providers">
+      <div class="provider">
+        <h4>OpenAI Responses</h4>
+        <code>POST /v1/responses</code>
+        <p>GPT-5.1, GPT-4.1, o-series. Uses the new <code>output_text</code> shape.</p>
+      </div>
+      <div class="provider">
+        <h4>Anthropic Messages</h4>
+        <code>POST /v1/messages</code>
+        <p>Claude Opus 4.7, Sonnet 4.6, Haiku 4.5. Native Messages schema.</p>
+      </div>
+      <div class="provider">
+        <h4>OpenAI-compatible</h4>
+        <code>POST /v1/chat/completions</code>
+        <p>NVIDIA NIM, DeepSeek, Kimi, OpenRouter, llama.cpp, vLLM, Ollama. Reasoning-model schemas (Qwen3, R1) handled out of the box.</p>
+      </div>
+      <div class="provider">
+        <h4>Anthropic-compatible</h4>
+        <code>POST /v1/messages</code>
+        <p>Self-hosted Claude proxies and gateways that mirror Anthropic's wire format.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install" class="section">
+  <div class="container narrow">
+    <h2>Install</h2>
+    <p>The Mac App Store and notarized binary releases are coming. Until 1.0, build from source — it's a one-liner once you have <a href="https://github.com/yonaskolb/XcodeGen">XcodeGen</a>:</p>
+    <pre class="code"><code>brew install xcodegen
+git clone https://github.com/madeye/runse-mac.git
+cd runse-mac &amp;&amp; xcodegen generate
+xcodebuild -scheme RunseMac -configuration Release \
+  -destination 'platform=macOS' -derivedDataPath build build
+cp -R build/Build/Products/Release/RunseMac.app /Applications/</code></pre>
+    <p class="muted">Requires macOS 15 (Sequoia) or later, Xcode 17, and an Apple silicon or Intel Mac.</p>
+  </div>
+</section>
+
+<section id="privacy" class="section section-alt">
+  <div class="container narrow">
+    <h2>Privacy by design.</h2>
+    <ul class="checklist">
+      <li><strong>No telemetry, no analytics, no remote config.</strong> Runse has no server.</li>
+      <li><strong>Your selection only goes to the provider you configured.</strong> The transform window shows you the model and provider name before each request.</li>
+      <li><strong>API keys live in the macOS Keychain.</strong> Stored under access group <code>$(AppIdentifierPrefix)io.github.madeye.runse.shared</code> when entitled, otherwise per-app.</li>
+      <li><strong>Accessibility access is opt-in.</strong> The Services menu still works without it.</li>
+      <li><strong>Source is MIT-licensed.</strong> Read it, fork it, ship your own build.</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <p>
+      Built by <a href="https://github.com/madeye">@madeye</a>.
+      Companion to <a href="https://github.com/madeye/runse">Runse for iOS</a>.
+      Source on <a href="https://github.com/madeye/runse-mac">GitHub</a>.
+    </p>
+    <p class="muted">MIT licensed · © 2026 Max Lv</p>
+  </div>
+</footer>
+
+</main>
+
+</body>
+</html>
