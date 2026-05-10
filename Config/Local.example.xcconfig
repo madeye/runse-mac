@@ -1,0 +1,5 @@
+DEFAULT_NVIDIA_API_KEY_OBFUSCATED =
+
+// Reuse the sibling iOS app's local development config when this checkout
+// sits next to ../runse. That file optionally includes its Secrets.xcconfig.
+#include? "../../runse/Config/Local.xcconfig"
