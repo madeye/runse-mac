@@ -151,8 +151,20 @@ h1 {
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 56px;
+  margin-bottom: 16px;
 }
+.cta-meta {
+  margin: 0 0 48px;
+  font-size: 13.5px;
+  color: var(--fg-muted);
+}
+.cta-meta a {
+  color: var(--fg-soft);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-underline-offset: 3px;
+}
+.cta-meta a:hover { color: var(--accent); }
 .btn {
   display: inline-block;
   padding: 11px 22px;
@@ -330,6 +342,45 @@ kbd {
   overflow-x: auto;
 }
 .muted { color: var(--fg-muted); font-size: 14.5px; }
+
+.install-steps {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+  margin: 8px 0 22px;
+}
+.install-steps li {
+  position: relative;
+  counter-increment: step;
+  padding: 12px 0 12px 44px;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg-soft);
+}
+.install-steps li:last-child { border-bottom: none; }
+.install-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  color: #143228;
+  background: var(--gold, var(--accent-warm));
+  box-shadow: 0 4px 10px -4px color-mix(in srgb, var(--gold, var(--accent-warm)) 70%, transparent);
+}
+.install-steps strong { color: var(--fg); }
+.install-steps a { color: var(--accent); }
+.install-sub {
+  margin: 36px 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fg);
+}
 
 /* ---------- Privacy checklist ---------- */
 

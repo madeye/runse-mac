@@ -47,9 +47,10 @@
       No copy-paste. No browser tab. No vendor lock-in.
     </p>
     <div class="cta-row">
-      <a href="https://github.com/madeye/runse-mac" class="btn btn-primary">View on GitHub</a>
-      <a href="https://github.com/madeye/runse-mac#installation" class="btn btn-secondary">Build from source</a>
+      <a href="https://github.com/madeye/runse-mac/releases/latest/download/RunseMac-1.0.0.zip" class="btn btn-primary">Download for macOS</a>
+      <a href="https://github.com/madeye/runse-mac" class="btn btn-secondary">View on GitHub</a>
     </div>
+    <p class="cta-meta">Notarized Developer ID build · macOS 15 (Sequoia) or later · <a href="https://github.com/madeye/runse-mac/releases/latest">Release notes</a></p>
     <div class="hero-art">
       <video class="hero-video"
              src="runse-intro.mp4"
@@ -121,14 +122,22 @@
 <section id="install" class="section">
   <div class="container narrow">
     <h2>Install</h2>
-    <p>The Mac App Store and notarized binary releases are coming. Until 1.0, build from source — it's a one-liner once you have <a href="https://github.com/yonaskolb/XcodeGen">XcodeGen</a>:</p>
+    <ol class="install-steps">
+      <li><a href="https://github.com/madeye/runse-mac/releases/latest/download/RunseMac-1.0.0.zip"><strong>Download <code>RunseMac-1.0.0.zip</code></strong></a> from the latest release.</li>
+      <li>Double-click to unzip — Finder produces <code>RunseMac.app</code>.</li>
+      <li>Drag <code>RunseMac.app</code> into <code>/Applications</code>.</li>
+      <li>Launch from Spotlight or Launchpad. macOS will ask for <strong>Accessibility</strong> access on first hotkey use — grant it so Runse can read your selection from other apps.</li>
+    </ol>
+    <p class="muted">Notarized Developer ID build (Team SK4GFF6AHN). Verify with <code>spctl -a -vvv -t install RunseMac.app</code> — it should report <code>Notarized Developer ID</code>. Requires macOS 15 (Sequoia) or later.</p>
+
+    <h3 class="install-sub">Build from source</h3>
+    <p>Prefer to compile it yourself? Once you have <a href="https://github.com/yonaskolb/XcodeGen">XcodeGen</a>:</p>
     <pre class="code"><code>brew install xcodegen
 git clone https://github.com/madeye/runse-mac.git
 cd runse-mac &amp;&amp; xcodegen generate
 xcodebuild -scheme RunseMac -configuration Release \
   -destination 'platform=macOS' -derivedDataPath build build
 cp -R build/Build/Products/Release/RunseMac.app /Applications/</code></pre>
-    <p class="muted">Requires macOS 15 (Sequoia) or later, Xcode 17, and an Apple silicon or Intel Mac.</p>
   </div>
 </section>
 
