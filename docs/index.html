@@ -5,12 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Runse for macOS — Refine and translate any selected text</title>
   <meta name="description" content="A macOS app that refines and translates selected text in any app, with global hotkeys, a Services menu integration, and a floating PopClip-style action bar. Bring your own OpenAI, Anthropic, or NVIDIA provider.">
-  <meta name="theme-color" content="#5e5ce6">
+  <meta name="theme-color" content="#143228">
   <meta property="og:title" content="Runse for macOS">
   <meta property="og:description" content="Refine and translate selected text in any macOS app — global hotkeys, Services menu, and a floating action bar over your selection.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://madeye.github.io/runse-mac/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='80'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E">
+  <meta property="og:image" content="https://madeye.github.io/runse-mac/icon.png">
+  <meta property="og:video" content="https://madeye.github.io/runse-mac/runse-intro.mp4">
+  <meta property="og:video:type" content="video/mp4">
+  <meta property="og:video:width" content="1920">
+  <meta property="og:video:height" content="1080">
+  <link rel="icon" type="image/png" href="icon.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -18,7 +23,7 @@
 <header class="nav">
   <div class="container nav-inner">
     <a href="#" class="brand">
-      <span class="brand-mark">✨</span>
+      <img src="icon.png" alt="" class="brand-mark" width="32" height="32">
       <span>Runse</span>
     </a>
     <nav>
@@ -45,20 +50,11 @@
       <a href="https://github.com/madeye/runse-mac#installation" class="btn btn-secondary">Build from source</a>
     </div>
     <div class="hero-art">
-      <pre class="terminal" aria-hidden="true">
-<span class="t-dim">Notes › selected text:</span>
-"hey there friend, how are u doing today"
-
-<span class="t-key">⌃⌥R</span> <span class="t-dim">Refine</span>
-       │
-       ▼
-┌──────────────────────────────────────┐
-│ <span class="t-accent">Hello there, friend! How are you</span>     │
-│ <span class="t-accent">doing today?</span>                         │
-│                                      │
-│ <span class="t-dim">[Copy]   [Run]</span>                       │
-└──────────────────────────────────────┘
-      </pre>
+      <video class="hero-video"
+             src="runse-intro.mp4"
+             poster="icon.png"
+             autoplay muted loop playsinline preload="metadata"
+             aria-label="Runse product intro: refine and translate selected text in any macOS app"></video>
     </div>
   </div>
 </section>

@@ -85,8 +85,11 @@ a:hover { text-decoration: underline; }
 }
 .brand:hover { text-decoration: none; }
 .brand-mark {
-  font-size: 22px;
-  filter: saturate(1.1);
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: block;
+  box-shadow: 0 4px 12px -4px rgba(20, 50, 40, 0.45);
 }
 .nav nav {
   display: flex;
@@ -163,8 +166,18 @@ h1 {
 .btn-secondary:hover { background: var(--bg-alt); }
 
 .hero-art {
-  max-width: 640px;
+  max-width: 960px;
   margin: 0 auto;
+}
+.hero-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 18px;
+  background: #143228;
+  box-shadow: var(--shadow), 0 0 0 1px rgba(20, 50, 40, 0.10);
+  object-fit: cover;
 }
 .terminal {
   background: var(--terminal-bg);
