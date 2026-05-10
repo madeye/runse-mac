@@ -88,10 +88,14 @@ struct ProvidersView: View {
                 } description: {
                     Text("Add an OpenAI- or Anthropic-compatible provider to get started.")
                 } actions: {
-                    Button(action: addProvider) {
+                    Menu {
+                        ForEach(ProviderPreset.allCases) { preset in
+                            Button(preset.title) { addProvider(preset: preset) }
+                        }
+                    } label: {
                         Label("Add Provider", systemImage: "plus")
                     }
-                    .buttonStyle(.borderedProminent)
+                    .menuStyle(.borderedButton)
                 }
             } else {
                 HSplitView {
@@ -110,10 +114,15 @@ struct ProvidersView: View {
         .navigationTitle("Providers")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button(action: addProvider) {
+                Menu {
+                    ForEach(ProviderPreset.allCases) { preset in
+                        Button(preset.title) { addProvider(preset: preset) }
+                    }
+                } label: {
                     Label("Add Provider", systemImage: "plus")
                 }
-                .help("Add a custom provider")
+                .menuIndicator(.visible)
+                .help("Add a provider from a preset, or pick Custom to fill everything in manually")
             }
         }
         .task {
@@ -144,14 +153,26 @@ struct ProvidersView: View {
         }
     }
 
-    private func addProvider() {
-        let profile = ProviderProfile(
-            name: "Custom Provider",
-            kind: .openAICompatible,
-            baseURL: "https://api.openai.com",
-            chatEndpoint: "/v1/chat/completions",
-            model: "gpt-4.1-mini"
-        )
+    private func addProvider(preset: ProviderPreset = .custom) {
+        let profile: ProviderProfile
+        if let configuration = preset.configuration {
+            profile = ProviderProfile(
+                name: configuration.name,
+                kind: configuration.kind,
+                baseURL: configuration.baseURL,
+                chatEndpoint: configuration.endpoint,
+                model: configuration.model,
+                extraHeadersJSON: configuration.extraHeaders
+            )
+        } else {
+            profile = ProviderProfile(
+                name: "Custom Provider",
+                kind: .openAICompatible,
+                baseURL: "https://api.openai.com",
+                chatEndpoint: "/v1/chat/completions",
+                model: "gpt-4.1-mini"
+            )
+        }
         modelContext.insert(profile)
         try? modelContext.save()
         selectedProfileID = profile.id
@@ -207,9 +228,21 @@ struct ProviderEditorView: View {
     @State private var statusMessage: String?
     @State private var isTesting = false
     @State private var isSavingKey = false
+    @State private var preset: ProviderPreset = .custom
 
     var body: some View {
         Form {
+            Section("Preset") {
+                Picker("Provider", selection: $preset) {
+                    ForEach(ProviderPreset.allCases) { preset in
+                        Text(preset.title).tag(preset)
+                    }
+                }
+                .onChange(of: preset) { _, value in
+                    applyPreset(value)
+                }
+            }
+
             Section("Endpoint") {
                 TextField("Name", text: $profile.name)
                 Picker("Type", selection: $profile.kind) {
@@ -217,10 +250,14 @@ struct ProviderEditorView: View {
                         Text(kind.title).tag(kind)
                     }
                 }
+                .disabled(preset != .custom)
                 TextField("Base URL", text: $profile.baseURL)
                     .textContentType(.URL)
+                    .disabled(preset != .custom)
                 TextField("Path", text: $profile.chatEndpoint)
+                    .disabled(preset != .custom)
                 TextField("Model", text: $profile.model)
+                    .disabled(preset != .custom)
             }
 
             Section("Headers") {
@@ -293,7 +330,24 @@ struct ProviderEditorView: View {
         .onChange(of: profile.chatEndpoint) { _, _ in save() }
         .onChange(of: profile.model) { _, _ in save() }
         .onChange(of: profile.extraHeadersJSON) { _, _ in save() }
-        .task { await loadAPIKey() }
+        .task {
+            preset = ProviderPreset.infer(from: profile)
+            await loadAPIKey()
+        }
+    }
+
+    private func applyPreset(_ preset: ProviderPreset) {
+        guard let configuration = preset.configuration else { return }
+        let nameIsAutoManaged = profile.name.isEmpty || ProviderPreset.allPresetNames.contains(profile.name)
+        if nameIsAutoManaged {
+            profile.name = configuration.name
+        }
+        profile.kind = configuration.kind
+        profile.baseURL = configuration.baseURL
+        profile.chatEndpoint = configuration.endpoint
+        profile.model = configuration.model
+        profile.extraHeadersJSON = configuration.extraHeaders
+        save()
     }
 
     private var connectionTitle: String {
