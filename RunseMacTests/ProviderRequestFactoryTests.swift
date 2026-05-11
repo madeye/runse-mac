@@ -28,8 +28,32 @@ final class ProviderRequestFactoryTests: XCTestCase {
         XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Authorization"), "Bearer secret")
         XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "X-Test"), "yes")
         XCTAssertEqual(json["model"] as? String, "test-model")
+        XCTAssertEqual(json["stream"] as? Bool, true)
+        XCTAssertNil(json["max_tokens"])
         XCTAssertEqual(messages.first?["content"], "System")
         XCTAssertEqual(messages.last?["content"], "User")
+    }
+
+    func testOpenAICompatibleRequestIncludesExplicitMaxTokensOnlyWhenSet() throws {
+        let profile = ProviderProfile(
+            name: "Test",
+            kind: .openAICompatible,
+            baseURL: "https://api.example.com",
+            chatEndpoint: "/v1/chat/completions",
+            model: "test-model"
+        )
+        let request = LLMRequest(
+            action: .refine,
+            model: profile.model,
+            systemPrompt: "System",
+            userPrompt: "User",
+            maxTokens: 123
+        )
+
+        let body = ProviderRequestFactory.body(profile: profile, request: request)
+
+        XCTAssertEqual(body["stream"] as? Bool, true)
+        XCTAssertEqual(body["max_tokens"] as? Int, 123)
     }
 
     func testParsesOpenAICompatibleResponseUsage() throws {
@@ -51,6 +75,23 @@ final class ProviderRequestFactoryTests: XCTestCase {
         let response = try ProviderResponseParser.parse(data: data, kind: .openAICompatible)
 
         XCTAssertEqual(response.text, "Done")
+        XCTAssertEqual(response.responseID, "response-id")
+        XCTAssertEqual(response.model, "test-model")
+        XCTAssertEqual(response.promptTokens, 3)
+        XCTAssertEqual(response.completionTokens, 2)
+        XCTAssertEqual(response.totalTokens, 5)
+    }
+
+    func testParsesOpenAICompatibleStreamResponse() throws {
+        let lines = [
+            #"data: {"id":"response-id","model":"test-model","choices":[{"delta":{"content":"Hel"}}]}"#,
+            #"data: {"choices":[{"delta":{"content":"lo"}}],"usage":{"prompt_tokens":3,"completion_tokens":2,"total_tokens":5}}"#,
+            "data: [DONE]"
+        ]
+
+        let response = try XCTUnwrap(ProviderResponseParser.parseStream(lines: lines, kind: .openAICompatible))
+
+        XCTAssertEqual(response.text, "Hello")
         XCTAssertEqual(response.responseID, "response-id")
         XCTAssertEqual(response.model, "test-model")
         XCTAssertEqual(response.promptTokens, 3)
