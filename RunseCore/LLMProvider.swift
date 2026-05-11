@@ -6,9 +6,9 @@ public struct LLMRequest: Sendable, Equatable {
     public var systemPrompt: String
     public var userPrompt: String
     public var temperature: Double
-    public var maxTokens: Int
+    public var maxTokens: Int?
 
-    public init(action: TransformAction, model: String, systemPrompt: String, userPrompt: String, temperature: Double = 0.2, maxTokens: Int = 8_192) {
+    public init(action: TransformAction, model: String, systemPrompt: String, userPrompt: String, temperature: Double = 0.2, maxTokens: Int? = nil) {
         self.action = action
         self.model = model
         self.systemPrompt = systemPrompt
@@ -54,7 +54,7 @@ public enum LLMProviderError: Error, LocalizedError, Equatable {
     /// extractable. The associated value carries a short raw-body excerpt to
     /// help diagnose reasoning-model schema variants (e.g. content split
     /// across `reasoning_content` vs `content`, or `<think>…</think>` blocks
-    /// truncated at `max_tokens`).
+    /// truncated before the final answer.
     case emptyOutput(String)
 
     public var errorDescription: String? {
@@ -91,10 +91,20 @@ public final class HTTPProviderClient: LLMProviderClient {
         }
         let urlRequest = try ProviderRequestFactory.urlRequest(profile: profile, apiKey: apiKey, request: request)
         do {
-            let (data, response) = try await session.data(for: urlRequest)
+            let (bytes, response) = try await session.bytes(for: urlRequest)
             guard let http = response as? HTTPURLResponse else { throw LLMProviderError.malformedJSON }
+            var data = Data()
+            var lines: [String] = []
+            for try await line in bytes.lines {
+                lines.append(line)
+                data.append(contentsOf: line.utf8)
+                data.append(0x0A)
+            }
             guard (200..<300).contains(http.statusCode) else {
                 throw LLMProviderError.invalidStatus(http.statusCode, String(data: data, encoding: .utf8) ?? "")
+            }
+            if let streamResponse = try ProviderResponseParser.parseStream(lines: lines, kind: profile.kind) {
+                return streamResponse
             }
             return try ProviderResponseParser.parse(data: data, kind: profile.kind)
         } catch let error as URLError where error.code == .timedOut {
@@ -124,8 +134,7 @@ public enum ProviderAPITester {
             model: profile.model,
             systemPrompt: "You are an API connectivity test. Reply with OK only.",
             userPrompt: "Reply with OK.",
-            temperature: 0,
-            maxTokens: 256
+            temperature: 0
         )
         let response = try await HTTPProviderClient(profile: profile, apiKey: apiKey).complete(request)
         return ProviderAPITestResult(
@@ -155,35 +164,47 @@ public enum ProviderRequestFactory {
     public static func body(profile: ProviderProfile, request: LLMRequest) -> [String: Any] {
         switch profile.kind {
         case .openAIResponses:
-            [
+            var body: [String: Any] = [
                 "model": request.model,
                 "input": [
                     ["role": "system", "content": request.systemPrompt],
                     ["role": "user", "content": request.userPrompt]
                 ],
                 "temperature": request.temperature,
-                "max_output_tokens": request.maxTokens
+                "stream": true
             ]
+            if let maxTokens = request.maxTokens {
+                body["max_output_tokens"] = maxTokens
+            }
+            return body
         case .anthropicMessages, .anthropicCompatible:
-            [
+            var body: [String: Any] = [
                 "model": request.model,
                 "system": request.systemPrompt,
                 "messages": [
                     ["role": "user", "content": request.userPrompt]
                 ],
                 "temperature": request.temperature,
-                "max_tokens": request.maxTokens
+                "stream": true
             ]
+            if let maxTokens = request.maxTokens {
+                body["max_tokens"] = maxTokens
+            }
+            return body
         case .openAICompatible:
-            [
+            var body: [String: Any] = [
                 "model": request.model,
                 "messages": [
                     ["role": "system", "content": request.systemPrompt],
                     ["role": "user", "content": request.userPrompt]
                 ],
                 "temperature": request.temperature,
-                "max_tokens": request.maxTokens
+                "stream": true
             ]
+            if let maxTokens = request.maxTokens {
+                body["max_tokens"] = maxTokens
+            }
+            return body
         }
     }
 
@@ -222,6 +243,51 @@ public enum ProviderResponseParser {
         return LLMResponse(text: value, responseID: object["id"] as? String, model: object["model"] as? String, usage: parseUsage(object["usage"] as? [String: Any]))
     }
 
+    public static func parseStream(lines: [String], kind: ProviderKind) throws -> LLMResponse? {
+        var textParts: [String] = []
+        var reasoningParts: [String] = []
+        var responseID: String?
+        var model: String?
+        var usage: [String: Int] = [:]
+        var sawStreamData = false
+
+        for line in lines {
+            guard line.hasPrefix("data:") else { continue }
+            sawStreamData = true
+
+            let payload = line.dropFirst(5).trimmingCharacters(in: .whitespacesAndNewlines)
+            guard payload != "[DONE]", let data = payload.data(using: .utf8) else { continue }
+            guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                throw LLMProviderError.malformedJSON
+            }
+
+            responseID = responseID ?? object["id"] as? String
+            model = model ?? object["model"] as? String
+            if let objectUsage = parseStreamUsage(object) {
+                usage.merge(objectUsage) { _, new in new }
+            }
+
+            switch kind {
+            case .openAIResponses:
+                appendResponsesStreamText(from: object, to: &textParts)
+            case .openAICompatible:
+                appendChatCompletionStreamText(from: object, textParts: &textParts, reasoningParts: &reasoningParts)
+            case .anthropicMessages, .anthropicCompatible:
+                appendAnthropicStreamText(from: object, to: &textParts)
+            }
+        }
+
+        guard sawStreamData else { return nil }
+        let text = textParts.joined().trimmingCharacters(in: .whitespacesAndNewlines)
+        let reasoning = reasoningParts.joined().trimmingCharacters(in: .whitespacesAndNewlines)
+        let value = text.isEmpty ? reasoning : text
+        guard !value.isEmpty else {
+            let raw = lines.joined(separator: "\n").data(using: .utf8) ?? Data()
+            throw LLMProviderError.emptyOutput(rawSnippet(raw))
+        }
+        return LLMResponse(text: value, responseID: responseID, model: model, usage: usage)
+    }
+
     /// Extracts an answer from a Chat Completions-shaped response, tolerating
     /// the schema variants used by NVIDIA NIM, DeepSeek, Kimi, and Qwen3
     /// thinking models. Order:
@@ -230,8 +296,8 @@ public enum ProviderResponseParser {
     ///   2. The legacy completions field `choices[0].text`.
     ///   3. `choices[0].message.reasoning_content` — last resort, since this
     ///      is intended for the model's chain of thought, but is the only
-    ///      non-empty field when a reasoning model gets cut off at
-    ///      `max_tokens` before producing the final answer.
+    ///      non-empty field when a reasoning model gets cut off before
+    ///      producing the final answer.
     static func parseChatCompletionText(_ object: [String: Any]) -> String? {
         guard let choice = (object["choices"] as? [[String: Any]])?.first else { return nil }
         let message = choice["message"] as? [String: Any]
@@ -273,6 +339,52 @@ public enum ProviderResponseParser {
         }.joined(separator: "\n")
     }
 
+    private static func appendResponsesStreamText(from object: [String: Any], to textParts: inout [String]) {
+        if object["type"] as? String == "response.output_text.delta",
+           let delta = object["delta"] as? String {
+            textParts.append(delta)
+            return
+        }
+        if let response = object["response"] as? [String: Any],
+           let finalText = parseResponsesText(response),
+           !finalText.isEmpty {
+            textParts = [finalText]
+        }
+    }
+
+    private static func appendChatCompletionStreamText(from object: [String: Any], textParts: inout [String], reasoningParts: inout [String]) {
+        guard let choice = (object["choices"] as? [[String: Any]])?.first else { return }
+        let delta = choice["delta"] as? [String: Any]
+        let message = choice["message"] as? [String: Any]
+
+        if let content = delta?["content"] as? String ?? message?["content"] as? String,
+           let stripped = stripThinkBlocks(content),
+           !stripped.isEmpty {
+            textParts.append(stripped)
+        }
+        if let reasoning = delta?["reasoning_content"] as? String ?? message?["reasoning_content"] as? String,
+           !reasoning.isEmpty {
+            reasoningParts.append(reasoning)
+        }
+        if let legacyText = choice["text"] as? String, !legacyText.isEmpty {
+            textParts.append(legacyText)
+        }
+    }
+
+    private static func appendAnthropicStreamText(from object: [String: Any], to textParts: inout [String]) {
+        if let delta = object["delta"] as? [String: Any],
+           let text = delta["text"] as? String {
+            textParts.append(text)
+            return
+        }
+        if let content = object["content"] as? [[String: Any]] {
+            let text = content.compactMap { $0["text"] as? String }.joined(separator: "\n")
+            if !text.isEmpty {
+                textParts = [text]
+            }
+        }
+    }
+
     private static func rawSnippet(_ data: Data, limit: Int = 240) -> String {
         let text = String(data: data, encoding: .utf8) ?? "<non-utf8 \(data.count) bytes>"
         let collapsed = text
@@ -280,6 +392,26 @@ public enum ProviderResponseParser {
             .replacingOccurrences(of: "  ", with: " ")
         if collapsed.count <= limit { return collapsed }
         return String(collapsed.prefix(limit)) + "…"
+    }
+
+    private static func parseStreamUsage(_ object: [String: Any]) -> [String: Int]? {
+        let usage = parseUsage(object["usage"] as? [String: Any])
+        if !usage.isEmpty {
+            return usage
+        }
+        if let response = object["response"] as? [String: Any] {
+            let responseUsage = parseUsage(response["usage"] as? [String: Any])
+            if !responseUsage.isEmpty {
+                return responseUsage
+            }
+        }
+        if let message = object["message"] as? [String: Any] {
+            let messageUsage = parseUsage(message["usage"] as? [String: Any])
+            if !messageUsage.isEmpty {
+                return messageUsage
+            }
+        }
+        return nil
     }
 
     private static func parseUsage(_ usage: [String: Any]?) -> [String: Int] {
