@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Runse for macOS — Refine and translate any selected text</title>
-  <meta name="description" content="A macOS app that refines and translates selected text in any app, with global hotkeys, a Services menu integration, and a floating PopClip-style action bar. Bring your own OpenAI, Anthropic, or NVIDIA provider.">
+  <title>Runse for macOS — Refine, translate, and convert pinyin for any selected text</title>
+  <meta name="description" content="A macOS app that refines, translates, and converts Chinese text to pinyin in any app, with global hotkeys, a Services menu integration, and a floating PopClip-style action bar. Bring your own OpenAI, Anthropic, or NVIDIA provider.">
   <meta name="theme-color" content="#FAF7EE" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#143228" media="(prefers-color-scheme: dark)">
   <meta property="og:title" content="Runse for macOS">
-  <meta property="og:description" content="Refine and translate selected text in any macOS app — global hotkeys, Services menu, and a floating action bar over your selection.">
+  <meta property="og:description" content="Refine, translate, and convert pinyin for selected text in any macOS app — global hotkeys, Services menu, and a floating action bar over your selection.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://madeye.github.io/runse-mac/">
   <meta property="og:image" content="https://madeye.github.io/runse-mac/icon.png">
@@ -41,13 +41,13 @@
 <section class="hero">
   <div class="container hero-inner">
     <p class="eyebrow">macOS · MIT licensed · Notarized</p>
-    <h1>Refine and translate any selected text, anywhere.</h1>
+    <h1>Refine, translate, and convert pinyin — anywhere.</h1>
     <p class="lede">
       Runse turns your selection in <em>any</em> macOS app into a one-keystroke prompt to the LLM provider of your choice.
-      No copy-paste. No browser tab. No vendor lock-in.
+      No copy-paste. No browser tab. No vendor lock-in. Streaming responses show results as they arrive.
     </p>
     <div class="cta-row">
-      <a href="https://github.com/madeye/runse-mac/releases/latest/download/RunseMac-1.0.0.zip" class="btn btn-primary">Download for macOS</a>
+      <a href="https://github.com/madeye/runse-mac/releases/latest/download/RunseMac-1.1.0.zip" class="btn btn-primary">Download for macOS</a>
       <a href="https://github.com/madeye/runse-mac" class="btn btn-secondary">View on GitHub</a>
     </div>
     <p class="cta-meta">Notarized Developer ID build · macOS 15 (Sequoia) or later · <a href="https://github.com/madeye/runse-mac/releases/latest">Release notes</a></p>
@@ -69,17 +69,17 @@
       <article class="card">
         <div class="card-icon">⌨️</div>
         <h3>Global hotkeys</h3>
-        <p><kbd>⌃⌥R</kbd> to refine, <kbd>⌃⌥T</kbd> to translate. Reads selected text directly via the Accessibility API — no clipboard, no pasteboard prompts.</p>
+        <p><kbd>⌃⌥R</kbd> to refine, <kbd>⌃⌥T</kbd> to translate, <kbd>⌃⌥P</kbd> to convert pinyin. Reads selected text directly via the Accessibility API — no clipboard, no pasteboard prompts.</p>
       </article>
       <article class="card">
         <div class="card-icon">🪄</div>
         <h3>Floating action bar</h3>
-        <p>A tiny PopClip-style popover appears next to your selection with Refine and Translate buttons. Toggle it off whenever it gets in the way.</p>
+        <p>A tiny PopClip-style popover appears next to your selection with Refine, Translate, and Pinyin buttons. Works in Chrome and Electron apps too. Toggle it off whenever it gets in the way.</p>
       </article>
       <article class="card">
         <div class="card-icon">🖱️</div>
         <h3>Services menu</h3>
-        <p>Right-click any selection → Services → <em>Runse Refine</em> / <em>Runse Translate</em>. Works in Mail, Notes, Safari, Xcode, and most Cocoa text views.</p>
+        <p>Right-click any selection → Services → <em>Runse Refine</em> / <em>Runse Translate</em> / <em>Runse Pinyin</em>. Works in Mail, Notes, Safari, Xcode, and most Cocoa text views.</p>
       </article>
       <article class="card">
         <div class="card-icon">📍</div>
@@ -123,7 +123,7 @@
   <div class="container narrow">
     <h2>Install</h2>
     <ol class="install-steps">
-      <li><a href="https://github.com/madeye/runse-mac/releases/latest/download/RunseMac-1.0.0.zip"><strong>Download <code>RunseMac-1.0.0.zip</code></strong></a> from the latest release.</li>
+      <li><a href="https://github.com/madeye/runse-mac/releases/latest/download/RunseMac-1.1.0.zip"><strong>Download <code>RunseMac-1.1.0.zip</code></strong></a> from the latest release.</li>
       <li>Double-click to unzip — Finder produces <code>RunseMac.app</code>.</li>
       <li>Drag <code>RunseMac.app</code> into <code>/Applications</code>.</li>
       <li>Launch from Spotlight or Launchpad. macOS will ask for <strong>Accessibility</strong> access on first hotkey use — grant it so Runse can read your selection from other apps.</li>
