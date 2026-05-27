@@ -21,15 +21,64 @@ enum AccessibilityReader {
     }
 
     /// Returns the focused element's selected text, or nil if none / unavailable.
+    /// Tries AX first; falls back to simulating Cmd+C for apps (Chrome, Electron)
+    /// whose AX tree doesn't expose the focused element or selected text.
     static func selectedText() -> String? {
-        guard let element = focusedElement() else { return nil }
-        var value: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(
-                element,
-                kAXSelectedTextAttribute as CFString,
-                &value) == .success,
-              let text = value as? String,
-              !text.isEmpty else { return nil }
+        if let element = focusedElement() {
+            var value: CFTypeRef?
+            if AXUIElementCopyAttributeValue(
+                    element,
+                    kAXSelectedTextAttribute as CFString,
+                    &value) == .success,
+               let text = value as? String,
+               !text.isEmpty {
+                return text
+            }
+        }
+        return selectedTextViaClipboard()
+    }
+
+    /// Simulates Cmd+C, reads the clipboard, and restores the previous contents.
+    private static func selectedTextViaClipboard() -> String? {
+        let pb = NSPasteboard.general
+        let oldChangeCount = pb.changeCount
+
+        let backup: [[(NSPasteboard.PasteboardType, Data)]] = (pb.pasteboardItems ?? []).map { item in
+            item.types.compactMap { type in
+                guard let data = item.data(forType: type) else { return nil }
+                return (type, data)
+            }
+        }
+
+        let src = CGEventSource(stateID: .combinedSessionState)
+        guard let keyDown = CGEvent(keyboardEventSource: src, virtualKey: 0x08, keyDown: true),
+              let keyUp = CGEvent(keyboardEventSource: src, virtualKey: 0x08, keyDown: false)
+        else { return nil }
+        keyDown.flags = .maskCommand
+        keyUp.flags = .maskCommand
+        keyDown.post(tap: .cghidEventTap)
+        keyUp.post(tap: .cghidEventTap)
+
+        Thread.sleep(forTimeInterval: 0.05)
+
+        let text: String?
+        if pb.changeCount != oldChangeCount {
+            text = pb.string(forType: .string)
+        } else {
+            text = nil
+        }
+
+        if !backup.isEmpty {
+            pb.clearContents()
+            for itemTypes in backup {
+                let item = NSPasteboardItem()
+                for (type, data) in itemTypes {
+                    item.setData(data, forType: type)
+                }
+                pb.writeObjects([item])
+            }
+        }
+
         return text
     }
 
@@ -70,11 +119,24 @@ enum AccessibilityReader {
     private static func focusedElement() -> AXUIElement? {
         let system = AXUIElementCreateSystemWide()
         var focused: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(
+        if AXUIElementCopyAttributeValue(
                 system,
                 kAXFocusedUIElementAttribute as CFString,
                 &focused) == .success,
-              let element = focused else { return nil }
+           let element = focused {
+            return (element as! AXUIElement)
+        }
+        // Chrome and some Electron apps don't expose the focused element via
+        // the system-wide element. Fall back to: frontmost app → focused element.
+        guard let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier,
+              pid > 0 else { return nil }
+        let app = AXUIElementCreateApplication(pid)
+        var appFocused: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(
+                app,
+                kAXFocusedUIElementAttribute as CFString,
+                &appFocused) == .success,
+              let element = appFocused else { return nil }
         return (element as! AXUIElement)
     }
 

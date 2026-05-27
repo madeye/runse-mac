@@ -26,6 +26,8 @@ enum ServiceRequest {
             "Runse - Refine Text"
         case .translate:
             "Runse - Translate Text"
+        case .pinyin:
+            "Runse - Pinyin"
         }
     }
 

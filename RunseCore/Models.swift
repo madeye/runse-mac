@@ -4,6 +4,7 @@ import SwiftData
 public enum TransformAction: String, Codable, CaseIterable, Identifiable, Sendable {
     case refine
     case translate
+    case pinyin
 
     public var id: String { rawValue }
     public var title: String { rawValue.capitalized }
@@ -137,6 +138,7 @@ public enum OutputLength: String, Codable, CaseIterable, Identifiable, Sendable 
 
     public static let defaultRefineID = "default-refine"
     public static let defaultTranslateID = "default-translate"
+    public static let defaultPinyinID = "default-pinyin"
 
     public static func builtIns() -> [PromptTemplate] {
         [
@@ -153,6 +155,13 @@ public enum OutputLength: String, Codable, CaseIterable, Identifiable, Sendable 
                 name: "Default Translate",
                 systemTemplate: "You are a precise translator. Preserve meaning, formatting, and names. Return only the translation.",
                 userTemplate: "Translate the text to {{target_language}}.\nInstruction: {{custom_instruction}}\n\nText:\n{{selected_text}}"
+            ),
+            PromptTemplate(
+                id: defaultPinyinID,
+                action: .pinyin,
+                name: "Default Pinyin",
+                systemTemplate: "You convert Chinese text into Hanyu Pinyin. Output only the pinyin — no Chinese characters, no translation, no commentary. Use lowercase letters with tone marks placed on the correct vowel (ā á ǎ à, ē é ě è, ī í ǐ ì, ō ó ǒ ò, ū ú ǔ ù, ǖ ǘ ǚ ǜ). Neutral tone has no mark. Separate syllables within a word with no space; separate words with a single space. Preserve original punctuation and line breaks. Pass non-Chinese characters (Latin letters, digits, symbols) through unchanged. Disambiguate polyphonic characters (多音字) from context.",
+                userTemplate: "Convert the following text to Hanyu Pinyin with correct tone marks.\nInstruction: {{custom_instruction}}\n\nText:\n{{selected_text}}"
             )
         ]
     }

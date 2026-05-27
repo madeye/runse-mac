@@ -45,7 +45,8 @@ struct TransformWindowView: View {
                     .labelsHidden()
                 }
 
-                if action == .refine {
+                switch action {
+                case .refine:
                     Section("Refine Options") {
                         Picker("Tone", selection: $tone) {
                             ForEach(Tone.allCases) { Text($0.rawValue.capitalized).tag($0) }
@@ -57,7 +58,7 @@ struct TransformWindowView: View {
                             ForEach(OutputLength.allCases) { Text($0.rawValue.capitalized).tag($0) }
                         }
                     }
-                } else {
+                case .translate:
                     Section("Translate Options") {
                         Picker("Common languages", selection: $targetLanguage) {
                             ForEach(CommonTargetLanguage.all) { language in
@@ -66,6 +67,8 @@ struct TransformWindowView: View {
                         }
                         TextField("Target language", text: $targetLanguage)
                     }
+                case .pinyin:
+                    EmptyView()
                 }
 
                 Section("Custom Instruction") {
@@ -91,10 +94,15 @@ struct TransformWindowView: View {
                         }
                         .frame(maxWidth: .infinity, minHeight: 180, alignment: .leading)
                     } else {
-                        TextEditor(text: $result)
-                            .font(.body)
-                            .frame(minHeight: 180)
-                            .scrollContentBackground(.hidden)
+                        VStack(alignment: .leading, spacing: 0) {
+                            TextEditor(text: $result)
+                                .font(.body)
+                                .frame(minHeight: 180)
+                                .scrollContentBackground(.hidden)
+                            if isLoading {
+                                ProgressView().controlSize(.small).padding(.top, 4)
+                            }
+                        }
                     }
                 }
 
@@ -182,6 +190,7 @@ struct TransformWindowView: View {
         defer { isLoading = false }
 
         do {
+            result = ""
             let runner = TransformRunner(modelContext: modelContext, profiles: profiles, templates: templates)
             result = try await runner.run(
                 selectedText: selectedText,
@@ -191,7 +200,9 @@ struct TransformWindowView: View {
                 length: length,
                 formality: formality,
                 customInstruction: customInstruction
-            )
+            ) { partial in
+                result = partial
+            }
             completedRequestFingerprint = requestFingerprint
         } catch {
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription

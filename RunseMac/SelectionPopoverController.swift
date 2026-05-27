@@ -18,6 +18,7 @@ final class SelectionPopoverController {
     private var observedPID: pid_t = 0
     private var panel: NSPanel?
     private var debounce: DispatchWorkItem?
+    private var mouseUpMonitor: Any?
 
     /// Master switch — when false, the popover is fully detached from
     /// AX notifications and consumes no resources.
@@ -26,8 +27,10 @@ final class SelectionPopoverController {
             guard oldValue != isEnabled else { return }
             if isEnabled {
                 attachToFrontmostApp()
+                installMouseUpMonitor()
             } else {
                 detach()
+                removeMouseUpMonitor()
             }
         }
     }
@@ -36,6 +39,7 @@ final class SelectionPopoverController {
         self.trigger = trigger
         observeWorkspace()
         attachToFrontmostApp()
+        installMouseUpMonitor()
     }
 
     // No deinit: this controller lives for the lifetime of the app. The
@@ -98,6 +102,22 @@ final class SelectionPopoverController {
         observedPID = 0
     }
 
+    /// Global mouse-up monitor — catches the end of a drag-select in apps
+    /// where `kAXSelectedTextChangedNotification` does not fire (web browsers).
+    private func installMouseUpMonitor() {
+        guard mouseUpMonitor == nil else { return }
+        mouseUpMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseUp) { [weak self] _ in
+            Task { @MainActor in self?.handleSelectionChanged() }
+        }
+    }
+
+    private func removeMouseUpMonitor() {
+        if let monitor = mouseUpMonitor {
+            NSEvent.removeMonitor(monitor)
+            mouseUpMonitor = nil
+        }
+    }
+
     private func handleSelectionChanged() {
         // Coalesce bursts of selection-change notifications (typing, drag-select)
         // so we only query AX once the selection has settled.
@@ -112,12 +132,22 @@ final class SelectionPopoverController {
     private func evaluateSelection() {
         guard isEnabled,
               let text = AccessibilityReader.selectedText(),
-              text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 2,
-              let bounds = AccessibilityReader.selectionBounds() else {
+              text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 2 else {
             hidePanel()
             return
         }
+        let bounds = AccessibilityReader.selectionBounds()
+            ?? Self.boundsFromMouseLocation()
         showPanel(near: bounds, text: text)
+    }
+
+    /// Synthesise a zero-height rect at the current mouse cursor position.
+    /// Used as a fallback when the focused element does not expose
+    /// `kAXBoundsForRangeParameterizedAttribute` (web browsers, Electron,
+    /// Java Swing).
+    private static func boundsFromMouseLocation() -> NSRect {
+        let mouse = NSEvent.mouseLocation
+        return NSRect(x: mouse.x, y: mouse.y, width: 1, height: 1)
     }
 
     private func showPanel(near bounds: NSRect, text: String) {
@@ -146,7 +176,7 @@ final class SelectionPopoverController {
     }
 
     private func makePanel() -> NSPanel {
-        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 168, height: 36),
+        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 248, height: 36),
                             styleMask: [.borderless, .nonactivatingPanel],
                             backing: .buffered,
                             defer: true)
@@ -178,6 +208,8 @@ struct SelectionActionBar: View {
             actionButton(label: "Refine", systemImage: "wand.and.stars", action: .refine)
             Divider().frame(height: 18)
             actionButton(label: "Translate", systemImage: "character.bubble", action: .translate)
+            Divider().frame(height: 18)
+            actionButton(label: "Pinyin", systemImage: "textformat", action: .pinyin)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)

@@ -15,7 +15,8 @@ struct TransformRunner {
         tone: Tone,
         length: OutputLength,
         formality: Formality,
-        customInstruction: String
+        customInstruction: String,
+        onDelta: (@MainActor (String) -> Void)? = nil
     ) async throws -> String {
         let prepared = try TransformRequestBuilder.makeRequest(
             selectedText: selectedText,
@@ -35,7 +36,7 @@ struct TransformRunner {
             throw LLMProviderError.missingAPIKey
         }
 
-        let response = try await HTTPProviderClient(profile: profile, apiKey: apiKey).complete(prepared.request)
+        let response = try await HTTPProviderClient(profile: profile, apiKey: apiKey).complete(prepared.request, onDelta: onDelta)
 
         modelContext.insert(TransformHistory(
             providerID: profile.id,
