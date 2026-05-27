@@ -91,6 +91,26 @@ targets:
               - public.html
               - NSHTMLPboardType
               - NSPasteboardTypeHTML
+          - NSMenuItem:
+              default: Runse Pinyin
+            NSMessage: pinyinText
+            NSPortName: Runse
+            NSSendTypes:
+              - NSStringPboardType
+              - NSRTFPboardType
+              - NSRTFDPboardType
+              - NSPasteboardTypeString
+              - NSPasteboardTypeRTF
+              - NSPasteboardTypeRTFD
+              - public.utf8-plain-text
+              - public.utf16-plain-text
+              - public.plain-text
+              - public.text
+              - public.rtf
+              - com.apple.flat-rtfd
+              - public.html
+              - NSHTMLPboardType
+              - NSPasteboardTypeHTML
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.madeye.runse.mac

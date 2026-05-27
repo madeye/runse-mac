@@ -69,6 +69,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotkeys.register(keyCode: UInt32(kVK_ANSI_T), modifiers: modifiers) {
             AppServices.shared.runFromAccessibility(action: .translate)
         }
+        hotkeys.register(keyCode: UInt32(kVK_ANSI_P), modifiers: modifiers) {
+            AppServices.shared.runFromAccessibility(action: .pinyin)
+        }
         self.hotkeyController = hotkeys
 
         // (B) Always-on menu bar status item.

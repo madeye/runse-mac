@@ -71,7 +71,13 @@ public enum LLMProviderError: Error, LocalizedError, Equatable {
 }
 
 public protocol LLMProviderClient {
-    @MainActor func complete(_ request: LLMRequest) async throws -> LLMResponse
+    @MainActor func complete(_ request: LLMRequest, onDelta: (@MainActor (String) -> Void)?) async throws -> LLMResponse
+}
+
+extension LLMProviderClient {
+    @MainActor public func complete(_ request: LLMRequest) async throws -> LLMResponse {
+        try await complete(request, onDelta: nil)
+    }
 }
 
 public final class HTTPProviderClient: LLMProviderClient {
@@ -85,7 +91,7 @@ public final class HTTPProviderClient: LLMProviderClient {
         self.session = session
     }
 
-    @MainActor public func complete(_ request: LLMRequest) async throws -> LLMResponse {
+    @MainActor public func complete(_ request: LLMRequest, onDelta: (@MainActor (String) -> Void)? = nil) async throws -> LLMResponse {
         guard !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw LLMProviderError.missingAPIKey
         }
@@ -99,6 +105,12 @@ public final class HTTPProviderClient: LLMProviderClient {
                 lines.append(line)
                 data.append(contentsOf: line.utf8)
                 data.append(0x0A)
+                if let onDelta, line.hasPrefix("data:") {
+                    let partial = ProviderResponseParser.accumulatedText(lines: lines, kind: profile.kind)
+                    if !partial.isEmpty {
+                        onDelta(partial)
+                    }
+                }
             }
             guard (200..<300).contains(http.statusCode) else {
                 throw LLMProviderError.invalidStatus(http.statusCode, String(data: data, encoding: .utf8) ?? "")
@@ -224,6 +236,27 @@ public enum ProviderRequestFactory {
 }
 
 public enum ProviderResponseParser {
+    public static func accumulatedText(lines: [String], kind: ProviderKind) -> String {
+        var textParts: [String] = []
+        var reasoningParts: [String] = []
+        for line in lines {
+            guard line.hasPrefix("data:") else { continue }
+            let payload = line.dropFirst(5).trimmingCharacters(in: .whitespacesAndNewlines)
+            guard payload != "[DONE]", let data = payload.data(using: .utf8),
+                  let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { continue }
+            switch kind {
+            case .openAIResponses:
+                appendResponsesStreamText(from: object, to: &textParts)
+            case .openAICompatible:
+                appendChatCompletionStreamText(from: object, textParts: &textParts, reasoningParts: &reasoningParts)
+            case .anthropicMessages, .anthropicCompatible:
+                appendAnthropicStreamText(from: object, to: &textParts)
+            }
+        }
+        let text = textParts.joined()
+        return text.isEmpty ? reasoningParts.joined() : text
+    }
+
     public static func parse(data: Data, kind: ProviderKind) throws -> LLMResponse {
         guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw LLMProviderError.malformedJSON

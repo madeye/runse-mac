@@ -36,6 +36,12 @@ final class MenuBarController: NSObject {
         translate.keyEquivalentModifierMask = [.control, .option]
         menu.addItem(translate)
 
+        let pinyin = NSMenuItem(title: "Pinyin Selected Text",
+                                action: #selector(convertPinyin), keyEquivalent: "p")
+        pinyin.target = self
+        pinyin.keyEquivalentModifierMask = [.control, .option]
+        menu.addItem(pinyin)
+
         menu.addItem(.separator())
 
         let openMain = NSMenuItem(title: "Open Runse…",
@@ -51,6 +57,7 @@ final class MenuBarController: NSObject {
 
     @objc private func refine() { trigger.runFromAccessibility(action: .refine) }
     @objc private func translate() { trigger.runFromAccessibility(action: .translate) }
+    @objc private func convertPinyin() { trigger.runFromAccessibility(action: .pinyin) }
 
     @objc private func openMainWindow() {
         NSApp.activate(ignoringOtherApps: true)

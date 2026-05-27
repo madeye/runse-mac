@@ -41,6 +41,10 @@ final class AppServices: NSObject, AccessibilityTrigger {
         openFromPasteboard(action: .translate, pasteboard: pasteboard, error: error)
     }
 
+    @objc func pinyinText(_ pasteboard: NSPasteboard, userData: String?, error: AutoreleasingUnsafeMutablePointer<NSString?>) {
+        openFromPasteboard(action: .pinyin, pasteboard: pasteboard, error: error)
+    }
+
     private func openFromPasteboard(action: TransformAction, pasteboard: NSPasteboard, error: AutoreleasingUnsafeMutablePointer<NSString?>) {
         guard let selectedText = ServiceRequest.selectedText(from: pasteboard) else {
             error.pointee = "Runse could not read selected text."
