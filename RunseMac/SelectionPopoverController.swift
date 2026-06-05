@@ -76,7 +76,11 @@ final class SelectionPopoverController {
         let result = AXObserverCreate(pid, { _, _, _, ctx in
             guard let ctx else { return }
             let me = Unmanaged<SelectionPopoverController>.fromOpaque(ctx).takeUnretainedValue()
-            DispatchQueue.main.async { me.handleSelectionChanged() }
+            // AX notifications also fire when a context menu opens (focus
+            // moves to the menu). Never allow the ⌘C clipboard fallback from
+            // this path — the synthetic keystroke would be consumed by the
+            // tracking menu and dismiss it.
+            DispatchQueue.main.async { me.handleSelectionChanged(allowClipboardFallback: false) }
         }, &observer)
         guard result == .success, let observer else { return }
         axObserver = observer
@@ -107,7 +111,10 @@ final class SelectionPopoverController {
     private func installMouseUpMonitor() {
         guard mouseUpMonitor == nil else { return }
         mouseUpMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseUp) { [weak self] _ in
-            Task { @MainActor in self?.handleSelectionChanged() }
+            // End of an explicit selection gesture — the one trigger where
+            // the ⌘C clipboard fallback is safe (no menu is tracking; left
+            // mouse-up inside a menu dismisses it before the debounce fires).
+            Task { @MainActor in self?.handleSelectionChanged(allowClipboardFallback: true) }
         }
     }
 
@@ -118,20 +125,22 @@ final class SelectionPopoverController {
         }
     }
 
-    private func handleSelectionChanged() {
+    private func handleSelectionChanged(allowClipboardFallback: Bool) {
         // Coalesce bursts of selection-change notifications (typing, drag-select)
-        // so we only query AX once the selection has settled.
+        // so we only query AX once the selection has settled. The last event in
+        // a burst decides whether the clipboard fallback is allowed — a
+        // drag-select ends with left mouse-up, so it keeps the fallback.
         debounce?.cancel()
         let work = DispatchWorkItem { [weak self] in
-            Task { @MainActor in self?.evaluateSelection() }
+            Task { @MainActor in self?.evaluateSelection(allowClipboardFallback: allowClipboardFallback) }
         }
         debounce = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.12, execute: work)
     }
 
-    private func evaluateSelection() {
+    private func evaluateSelection(allowClipboardFallback: Bool) {
         guard isEnabled,
-              let text = AccessibilityReader.selectedText(),
+              let text = AccessibilityReader.selectedText(allowClipboardFallback: allowClipboardFallback),
               text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 2 else {
             hidePanel()
             return

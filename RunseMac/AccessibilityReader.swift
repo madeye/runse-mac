@@ -23,7 +23,13 @@ enum AccessibilityReader {
     /// Returns the focused element's selected text, or nil if none / unavailable.
     /// Tries AX first; falls back to simulating Cmd+C for apps (Chrome, Electron)
     /// whose AX tree doesn't expose the focused element or selected text.
-    static func selectedText() -> String? {
+    ///
+    /// Pass `allowClipboardFallback: false` from passive triggers (AX
+    /// notifications) — a synthetic ⌘C posted while a context menu is tracking
+    /// is consumed by the menu as a key equivalent and dismisses it. The
+    /// fallback is also skipped whenever a menu has focus, so an explicit
+    /// trigger can't tear down a menu either.
+    static func selectedText(allowClipboardFallback: Bool = true) -> String? {
         if let element = focusedElement() {
             var value: CFTypeRef?
             if AXUIElementCopyAttributeValue(
@@ -35,7 +41,25 @@ enum AccessibilityReader {
                 return text
             }
         }
+        guard allowClipboardFallback, !focusedElementIsMenu() else { return nil }
         return selectedTextViaClipboard()
+    }
+
+    /// True when the focused AX element is part of an open menu (context menu,
+    /// menu bar dropdown, status item menu). Menu tracking is modal: any
+    /// synthetic keystroke posted while it runs is routed to the menu and
+    /// closes it, so callers must never simulate ⌘C in this state.
+    private static func focusedElementIsMenu() -> Bool {
+        guard let element = focusedElement() else { return false }
+        var role: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(
+                element,
+                kAXRoleAttribute as CFString,
+                &role) == .success,
+              let roleString = role as? String else { return false }
+        return roleString == "AXMenu"
+            || roleString == "AXMenuItem"
+            || roleString == "AXMenuBarItem"
     }
 
     /// Simulates Cmd+C, reads the clipboard, and restores the previous contents.
