@@ -1,0 +1,6 @@
+What's new in 1.1:
+
+* Pinyin transform mode — convert Chinese text to Pinyin with tone marks.
+* Streaming responses — see output appear in real time as it's generated.
+* The floating action bar now works with text boxes in web browsers.
+* Fixed the floating menu dismissing right-click context menus.

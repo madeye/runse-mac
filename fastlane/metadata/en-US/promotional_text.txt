@@ -1,0 +1,1 @@
+Refine or translate selected text in any Mac app — global hotkeys, a floating action bar, the Services menu, and your own LLM provider.
