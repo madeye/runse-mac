@@ -1,0 +1,32 @@
+Runse helps you refine and translate selected text in any Mac app.
+
+Select text in Safari, Notes, Mail, Xcode, or your editor of choice and trigger Runse however feels most natural. The text opens in a compact transform window — run the action, review the result, and copy it back. No copy-pasting into a separate chat window.
+
+FOUR WAYS TO TRIGGER IT
+* Global hotkeys — ⌃⌥R to refine, ⌃⌥T to translate
+* Floating action bar — a small popover that appears next to your selection, including in web browsers
+* Services menu — right-click selected text → Services → Runse
+* Menu bar — quick access from the wand icon
+
+WHAT IT DOES
+* Refine selected text for clearer wording
+* Translate into your default or custom target language
+* Convert Chinese text to Pinyin with tone marks
+* Stream responses in real time as they are generated
+* Customize prompt templates for your workflow
+
+BRING YOUR OWN PROVIDER
+Works with OpenAI, Anthropic, and any OpenAI- or Anthropic-compatible endpoint — NVIDIA NIM, DeepSeek, Kimi, OpenRouter, or a local llama.cpp / vLLM server. Reasoning-model output (Qwen3, DeepSeek-R1) is handled out of the box.
+
+PRIVACY
+Selected text is sent only to the provider you configured, and only when you run an action. API keys are stored in the macOS Keychain and never written to disk in plain text. Runse has no analytics, no remote config, and no first-party server.
+
+Privacy Policy: https://github.com/madeye/runse-mac/blob/main/PRIVACY.md
+
+REQUIREMENTS
+* macOS 15 or later
+* An API key for the provider you want to use
+
+OPEN SOURCE
+Runse for macOS is open source:
+https://github.com/madeye/runse-mac
