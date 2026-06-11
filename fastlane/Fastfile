@@ -1,6 +1,9 @@
 default_platform(:mac)
 
-API_KEY_PATH = "/Users/mlv/.appstoreconnect/api_key.json"
+# Path to an App Store Connect API key config (JSON with key_id, issuer_id,
+# key). Set ASC_API_KEY_PATH in the gitignored fastlane/.env (fastlane loads
+# it automatically) or export it before invoking fastlane.
+API_KEY_PATH = ENV["ASC_API_KEY_PATH"]
 
 platform :mac do
   desc "Download current App Store metadata (text only) into ./fastlane/metadata"

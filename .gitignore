@@ -19,6 +19,22 @@ RunseMac.xcodeproj/project.xcworkspace/xcuserdata/
 Config/Local.xcconfig
 Config/Secrets.xcconfig
 
+# Signing / App Store Connect credentials — never commit
+*.p8
+*.p12
+*.mobileprovision
+*.provisionprofile
+*.cer
+api_key*.json
+prod.env
+
+# fastlane local state and generated artifacts
+fastlane/.env
+fastlane/report.xml
+fastlane/README.md
+fastlane/test_output/
+fastlane/builds/
+
 # Swift Package Manager
 .build/
 .swiftpm/

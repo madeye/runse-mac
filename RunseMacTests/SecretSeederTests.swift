@@ -78,8 +78,8 @@ final class SecretSeederTests: XCTestCase {
 
     func testKeychainAccessGroupUsesConcretePrefix() {
         XCTAssertEqual(
-            KeychainAccessGroup.make(appIdentifierPrefix: "SK4GFF6AHN."),
-            "SK4GFF6AHN.io.github.madeye.runse.shared"
+            KeychainAccessGroup.make(appIdentifierPrefix: "ABCDE12345."),
+            "ABCDE12345.io.github.madeye.runse.shared"
         )
     }
 }
