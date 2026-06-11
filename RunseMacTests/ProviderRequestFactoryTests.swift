@@ -98,4 +98,32 @@ final class ProviderRequestFactoryTests: XCTestCase {
         XCTAssertEqual(response.completionTokens, 2)
         XCTAssertEqual(response.totalTokens, 5)
     }
+
+    func testStreamDeltasKeepWordBoundaryWhitespace() throws {
+        let lines = [
+            #"data: {"choices":[{"delta":{"content":"We"}}]}"#,
+            #"data: {"choices":[{"delta":{"content":" were"}}]}"#,
+            #"data: {"choices":[{"delta":{"content":" thinking.\n"}}]}"#,
+            "data: [DONE]"
+        ]
+
+        let response = try XCTUnwrap(ProviderResponseParser.parseStream(lines: lines, kind: .openAICompatible))
+        XCTAssertEqual(response.text, "We were thinking.")
+
+        let partial = ProviderResponseParser.accumulatedText(lines: lines, kind: .openAICompatible)
+        XCTAssertEqual(partial, "We were thinking.")
+    }
+
+    func testStreamStripsThinkBlockSpanningDeltas() throws {
+        let lines = [
+            #"data: {"choices":[{"delta":{"content":"<th"}}]}"#,
+            #"data: {"choices":[{"delta":{"content":"ink>planning"}}]}"#,
+            #"data: {"choices":[{"delta":{"content":"</think>An"}}]}"#,
+            #"data: {"choices":[{"delta":{"content":"swer"}}]}"#,
+            "data: [DONE]"
+        ]
+
+        let response = try XCTUnwrap(ProviderResponseParser.parseStream(lines: lines, kind: .openAICompatible))
+        XCTAssertEqual(response.text, "Answer")
+    }
 }

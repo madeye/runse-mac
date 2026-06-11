@@ -253,7 +253,7 @@ public enum ProviderResponseParser {
                 appendAnthropicStreamText(from: object, to: &textParts)
             }
         }
-        let text = textParts.joined()
+        let text = stripThinkBlocks(textParts.joined()) ?? ""
         return text.isEmpty ? reasoningParts.joined() : text
     }
 
@@ -311,7 +311,7 @@ public enum ProviderResponseParser {
         }
 
         guard sawStreamData else { return nil }
-        let text = textParts.joined().trimmingCharacters(in: .whitespacesAndNewlines)
+        let text = stripThinkBlocks(textParts.joined()) ?? ""
         let reasoning = reasoningParts.joined().trimmingCharacters(in: .whitespacesAndNewlines)
         let value = text.isEmpty ? reasoning : text
         guard !value.isEmpty else {
@@ -390,10 +390,12 @@ public enum ProviderResponseParser {
         let delta = choice["delta"] as? [String: Any]
         let message = choice["message"] as? [String: Any]
 
+        // Append deltas verbatim: a delta's leading/trailing whitespace is
+        // significant ("We" + " were"), and <think> tags can span deltas, so
+        // think-block stripping happens on the joined text instead.
         if let content = delta?["content"] as? String ?? message?["content"] as? String,
-           let stripped = stripThinkBlocks(content),
-           !stripped.isEmpty {
-            textParts.append(stripped)
+           !content.isEmpty {
+            textParts.append(content)
         }
         if let reasoning = delta?["reasoning_content"] as? String ?? message?["reasoning_content"] as? String,
            !reasoning.isEmpty {
