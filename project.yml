@@ -119,7 +119,6 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.madeye.runse.mac
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        CODE_SIGN_ENTITLEMENTS: RunseMac/RunseMac.entitlements
   RunseMacTests:
     type: bundle.unit-test
     platform: macOS
