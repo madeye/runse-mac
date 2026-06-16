@@ -52,6 +52,7 @@ targets:
         DefaultNVIDIAAPIKeyObfuscated: $(DEFAULT_NVIDIA_API_KEY_OBFUSCATED)
         LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
         LSApplicationCategoryType: public.app-category.productivity
+        ITSAppUsesNonExemptEncryption: false
         NSPrincipalClass: NSApplication
         NSServices:
           - NSMenuItem:
