@@ -20,10 +20,10 @@ public enum ProviderKind: String, Codable, CaseIterable, Identifiable, Sendable 
 
     public var title: String {
         switch self {
-        case .openAIResponses: "OpenAI Responses"
-        case .anthropicMessages: "Anthropic Messages"
-        case .openAICompatible: "OpenAI Compatible"
-        case .anthropicCompatible: "Anthropic Compatible"
+        case .openAIResponses: String(localized: "OpenAI Responses", bundle: .runseCore)
+        case .anthropicMessages: String(localized: "Anthropic Messages", bundle: .runseCore)
+        case .openAICompatible: String(localized: "OpenAI Compatible", bundle: .runseCore)
+        case .anthropicCompatible: String(localized: "Anthropic Compatible", bundle: .runseCore)
         }
     }
 }

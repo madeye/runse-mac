@@ -24,19 +24,19 @@ final class MenuBarController: NSObject {
 
     private func buildMenu() -> NSMenu {
         let menu = NSMenu()
-        let refine = NSMenuItem(title: "Refine Selected Text",
+        let refine = NSMenuItem(title: String(localized: "Refine Selected Text"),
                                 action: #selector(refine), keyEquivalent: "r")
         refine.target = self
         refine.keyEquivalentModifierMask = [.control, .option]
         menu.addItem(refine)
 
-        let translate = NSMenuItem(title: "Translate Selected Text",
+        let translate = NSMenuItem(title: String(localized: "Translate Selected Text"),
                                    action: #selector(translate), keyEquivalent: "t")
         translate.target = self
         translate.keyEquivalentModifierMask = [.control, .option]
         menu.addItem(translate)
 
-        let pinyin = NSMenuItem(title: "Pinyin Selected Text",
+        let pinyin = NSMenuItem(title: String(localized: "Pinyin Selected Text"),
                                 action: #selector(convertPinyin), keyEquivalent: "p")
         pinyin.target = self
         pinyin.keyEquivalentModifierMask = [.control, .option]
@@ -44,12 +44,12 @@ final class MenuBarController: NSObject {
 
         menu.addItem(.separator())
 
-        let openMain = NSMenuItem(title: "Open Runse…",
+        let openMain = NSMenuItem(title: String(localized: "Open Runse…"),
                                   action: #selector(openMainWindow), keyEquivalent: "")
         openMain.target = self
         menu.addItem(openMain)
 
-        let quit = NSMenuItem(title: "Quit Runse",
+        let quit = NSMenuItem(title: String(localized: "Quit Runse"),
                               action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         menu.addItem(quit)
         return menu

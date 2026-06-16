@@ -23,11 +23,11 @@ enum ServiceRequest {
     static func windowTitle(for action: TransformAction) -> String {
         switch action {
         case .refine:
-            "Runse - Refine Text"
+            String(localized: "Runse - Refine Text")
         case .translate:
-            "Runse - Translate Text"
+            String(localized: "Runse - Translate Text")
         case .pinyin:
-            "Runse - Pinyin"
+            String(localized: "Runse - Pinyin")
         }
     }
 

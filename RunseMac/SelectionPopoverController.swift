@@ -214,11 +214,11 @@ struct SelectionActionBar: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            actionButton(label: "Refine", systemImage: "wand.and.stars", action: .refine)
+            actionButton(label: String(localized: "Refine"), systemImage: "wand.and.stars", action: .refine)
             Divider().frame(height: 18)
-            actionButton(label: "Translate", systemImage: "character.bubble", action: .translate)
+            actionButton(label: String(localized: "Translate"), systemImage: "character.bubble", action: .translate)
             Divider().frame(height: 18)
-            actionButton(label: "Pinyin", systemImage: "textformat", action: .pinyin)
+            actionButton(label: String(localized: "Pinyin"), systemImage: "textformat", action: .pinyin)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)

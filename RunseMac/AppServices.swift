@@ -47,11 +47,11 @@ final class AppServices: NSObject, AccessibilityTrigger {
 
     private func openFromPasteboard(action: TransformAction, pasteboard: NSPasteboard, error: AutoreleasingUnsafeMutablePointer<NSString?>) {
         guard let selectedText = ServiceRequest.selectedText(from: pasteboard) else {
-            error.pointee = "Runse could not read selected text."
+            error.pointee = String(localized: "Runse could not read selected text.") as NSString
             return
         }
         guard modelContainer != nil else {
-            error.pointee = "Runse is still starting up."
+            error.pointee = String(localized: "Runse is still starting up.") as NSString
             return
         }
         presentTransformWindow(action: action, selectedText: selectedText)

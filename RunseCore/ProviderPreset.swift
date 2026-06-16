@@ -16,7 +16,7 @@ public enum ProviderPreset: String, CaseIterable, Identifiable, Sendable {
 
     public var title: String {
         switch self {
-        case .custom: "Custom"
+        case .custom: String(localized: "Custom", bundle: .runseCore)
         case .deepSeek: "DeepSeek China"
         case .kimi: "Kimi China"
         case .miniMax: "MiniMax China"

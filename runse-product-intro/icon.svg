@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Forest tile gradient, sampled from the video composition palette -->
+    <linearGradient id="forest" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22513F"/>
+      <stop offset="55%" stop-color="#1D4538"/>
+      <stop offset="100%" stop-color="#143228"/>
+    </linearGradient>
+
+    <!-- Soft jade glow behind the glyph -->
+    <radialGradient id="jadeGlow" cx="32%" cy="24%" r="62%">
+      <stop offset="0%" stop-color="#7FB39A" stop-opacity="0.30"/>
+      <stop offset="55%" stop-color="#7FB39A" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Cream Georgia "R" gets a subtle drop shadow into the deep forest -->
+    <filter id="glyphShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="12"/>
+      <feOffset dx="0" dy="14" result="offset"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.55"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Mint and gold pebbles each get a small contact shadow -->
+    <filter id="pebbleShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="9"/>
+      <feOffset dx="0" dy="10" result="offset"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Inner highlight along the top edge -->
+    <linearGradient id="topSheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#EFE7D2" stop-opacity="0.18"/>
+      <stop offset="18%" stop-color="#EFE7D2" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- macOS-style rounded square mask (corner radius ~22.5% of side) -->
+    <clipPath id="tileClip">
+      <rect x="0" y="0" width="1024" height="1024" rx="230" ry="230"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#tileClip)">
+    <!-- Base forest tile -->
+    <rect x="0" y="0" width="1024" height="1024" fill="url(#forest)"/>
+    <!-- Jade refractive glow upper-left -->
+    <rect x="0" y="0" width="1024" height="1024" fill="url(#jadeGlow)"/>
+
+    <!-- Gold pebble (warm amber, upper-right) -->
+    <circle cx="781" cy="333" r="111" fill="#D2A85F" filter="url(#pebbleShadow)"/>
+    <!-- specular highlight on the gold pebble -->
+    <ellipse cx="755" cy="298" rx="38" ry="22" fill="#F1D89A" opacity="0.55"/>
+
+    <!-- Mint pebble (sage, lower-left) -->
+    <circle cx="205" cy="612" r="80" fill="#A8CDB5" filter="url(#pebbleShadow)"/>
+    <ellipse cx="188" cy="592" rx="26" ry="14" fill="#D6E8D4" opacity="0.55"/>
+
+    <!-- Cream Georgia "R", the wordmark glyph -->
+    <g filter="url(#glyphShadow)">
+      <text x="512" y="660"
+            font-family="Georgia, 'Times New Roman', serif"
+            font-weight="700"
+            font-size="640"
+            fill="#EFE7D2"
+            text-anchor="middle"
+            letter-spacing="-12">R</text>
+    </g>
+
+    <!-- Top inner sheen for material feel -->
+    <rect x="0" y="0" width="1024" height="1024" fill="url(#topSheen)"/>
+
+    <!-- Hairline cream stroke along the rounded edge for crispness -->
+    <rect x="2" y="2" width="1020" height="1020" rx="228" ry="228"
+          fill="none" stroke="#EFE7D2" stroke-opacity="0.10" stroke-width="2"/>
+  </g>
+</svg>
