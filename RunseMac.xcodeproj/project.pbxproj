@@ -21,6 +21,7 @@
 		3C8D019E593C519983F04606 /* SelectionPopoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD2C4FD592BEDA091B30B7 /* SelectionPopoverController.swift */; };
 		4E2049BC624B1CE64C3A61D6 /* SecretSeederTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E8773E93288F7A0F118BA5 /* SecretSeederTests.swift */; };
 		58A9958829AD98B91128C30B /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC319A105C5F75B15EA9DC1 /* Models.swift */; };
+		73D390D6B7DC8ACC538F122D /* BootstrapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E674D9E9933601B84C1A0829 /* BootstrapTests.swift */; };
 		777916F5D4AEDF03CA2EE5A1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968585B393DD2C27DF51D924 /* Constants.swift */; };
 		7EAC392DA4155D5DF624AA01 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2108A7209EF334AEA2B2DCA1 /* ContentView.swift */; };
 		84A1201A82C35DE745240EF8 /* RunseMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5A0DEFAA47A50F32FE55AE /* RunseMacApp.swift */; };
@@ -136,6 +137,7 @@
 		C17C103041C6A47802384D19 /* Local.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.example.xcconfig; sourceTree = "<group>"; };
 		DC9A41E4AD68F1422606F670 /* ServiceRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceRequest.swift; sourceTree = "<group>"; };
 		E61D0BF1E95CCF82062499EB /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
+		E674D9E9933601B84C1A0829 /* BootstrapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BootstrapTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +183,7 @@
 		C9A7E03389D822DF5634B5E4 /* RunseMacTests */ = {
 			isa = PBXGroup;
 			children = (
+				E674D9E9933601B84C1A0829 /* BootstrapTests.swift */,
 				01020299BCC49BD0D907EE86 /* PromptRendererTests.swift */,
 				23B860647C1237F2F906EB99 /* ProviderPresetTests.swift */,
 				08B624367DC0183D4505DB30 /* ProviderRequestFactoryTests.swift */,
@@ -401,6 +404,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73D390D6B7DC8ACC538F122D /* BootstrapTests.swift in Sources */,
 				3557A71D7552D4D12832FF28 /* PromptRendererTests.swift in Sources */,
 				87A2B92411F0EC485566C3F6 /* ProviderPresetTests.swift in Sources */,
 				EC080367E79190A006409611 /* ProviderRequestFactoryTests.swift in Sources */,
