@@ -48,3 +48,6 @@ Package.resolved
 
 # Xcode logs
 *.log
+
+# Local agent instructions (not tracked)
+CLAUDE.md
