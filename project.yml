@@ -51,6 +51,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         DefaultNVIDIAAPIKeyObfuscated: $(DEFAULT_NVIDIA_API_KEY_OBFUSCATED)
         LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        LSApplicationCategoryType: public.app-category.productivity
         NSPrincipalClass: NSApplication
         NSServices:
           - NSMenuItem:
@@ -117,6 +118,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.madeye.runse.mac
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: RunseMac/RunseMac.entitlements
   RunseMacTests:
     type: bundle.unit-test
     platform: macOS
