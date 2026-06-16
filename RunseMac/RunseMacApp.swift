@@ -11,23 +11,22 @@ struct RunseMacApp: App {
     private let container: ModelContainer
 
     init() {
-        do {
-            container = try Bootstrap.modelContainer()
-            let modelContainer = container
-            let keychainAccessGroup = KeychainAccessGroup.current()
-            let seedValue = Bundle.main.obfuscatedDefaultNVIDIAAPIKey()
-            Task { @MainActor in
-                try? Bootstrap.seedDefaultsIfNeeded(context: modelContainer.mainContext)
-                let keychain = KeychainStore(accessGroup: keychainAccessGroup)
-                try? await SecretSeeder.seedDefaultNVIDIAIfNeeded(
-                    secretStore: keychain,
-                    buildSettingValue: seedValue
-                )
-            }
-            AppServices.shared.configure(modelContainer: container)
-        } catch {
-            fatalError("Unable to create model container: \(error)")
+        // Never throws: a corrupt/incompatible store is recovered, and any
+        // remaining failure degrades to in-memory so the app launches instead
+        // of crash-looping at startup.
+        container = Bootstrap.resilientModelContainer()
+        let modelContainer = container
+        let keychainAccessGroup = KeychainAccessGroup.current()
+        let seedValue = Bundle.main.obfuscatedDefaultNVIDIAAPIKey()
+        Task { @MainActor in
+            try? Bootstrap.seedDefaultsIfNeeded(context: modelContainer.mainContext)
+            let keychain = KeychainStore(accessGroup: keychainAccessGroup)
+            try? await SecretSeeder.seedDefaultNVIDIAIfNeeded(
+                secretStore: keychain,
+                buildSettingValue: seedValue
+            )
         }
+        AppServices.shared.configure(modelContainer: container)
     }
 
     var body: some Scene {
