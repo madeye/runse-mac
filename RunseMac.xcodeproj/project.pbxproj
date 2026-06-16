@@ -132,6 +132,7 @@
 		B1FDB9A3FC7428522C69A989 /* RunseMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunseMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F5CA401224092637462253 /* Bootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bootstrap.swift; sourceTree = "<group>"; };
 		B6EB34E2C525E89B2D46E040 /* AppServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppServices.swift; sourceTree = "<group>"; };
+		BB9C1429B57A661B08A40013 /* RunseMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RunseMac.entitlements; sourceTree = "<group>"; };
 		BECEAD261359385920E31E19 /* TransformRequestBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransformRequestBuilderTests.swift; sourceTree = "<group>"; };
 		BFCBB100F70BEB252C3AA2EC /* NotesContextMenuUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesContextMenuUITests.swift; sourceTree = "<group>"; };
 		C17C103041C6A47802384D19 /* Local.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.example.xcconfig; sourceTree = "<group>"; };
@@ -241,6 +242,7 @@
 				16B3656E553D3F57CB2A2059 /* InfoPlist.xcstrings */,
 				6376C1BC3873E248BBE26A60 /* Localizable.xcstrings */,
 				E61D0BF1E95CCF82062499EB /* MenuBarController.swift */,
+				BB9C1429B57A661B08A40013 /* RunseMac.entitlements */,
 				9F5A0DEFAA47A50F32FE55AE /* RunseMacApp.swift */,
 				5CCD2C4FD592BEDA091B30B7 /* SelectionPopoverController.swift */,
 				DC9A41E4AD68F1422606F670 /* ServiceRequest.swift */,
@@ -525,6 +527,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = RunseMac/RunseMac.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = RunseMac/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -540,6 +543,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = RunseMac/RunseMac.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = RunseMac/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
