@@ -20,6 +20,8 @@ settings:
       # notarized straight from `xcodebuild build` (without going through
       # archive/export).
       CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
+      # Hardened Runtime is required for Developer ID notarization.
+      ENABLE_HARDENED_RUNTIME: YES
 configFiles:
   Debug: Config/Local.example.xcconfig
   Release: Config/Local.example.xcconfig
