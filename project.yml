@@ -13,7 +13,7 @@ settings:
     SWIFT_EMIT_LOC_STRINGS: YES
     CODE_SIGN_STYLE: Automatic
     MARKETING_VERSION: "1.1"
-    CURRENT_PROJECT_VERSION: 2
+    CURRENT_PROJECT_VERSION: 3
   configs:
     Release:
       # Strip the get-task-allow entitlement so Release builds can be
