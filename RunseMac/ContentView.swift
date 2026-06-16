@@ -10,9 +10,9 @@ private enum SidebarItem: String, Hashable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .providers: "Providers"
-        case .settings: "Settings"
-        case .history: "History"
+        case .providers: String(localized: "Providers")
+        case .settings: String(localized: "Settings")
+        case .history: String(localized: "History")
         }
     }
 
@@ -166,7 +166,7 @@ struct ProvidersView: View {
             )
         } else {
             profile = ProviderProfile(
-                name: "Custom Provider",
+                name: String(localized: "Custom Provider"),
                 kind: .openAICompatible,
                 baseURL: "https://api.openai.com",
                 chatEndpoint: "/v1/chat/completions",
@@ -352,10 +352,10 @@ struct ProviderEditorView: View {
 
     private var connectionTitle: String {
         switch profile.apiTestStatus {
-        case .passed: "Connection passed"
-        case .failed: "Connection failed"
-        case .testing: "Testing…"
-        case .untested: "Not yet tested"
+        case .passed: String(localized: "Connection passed")
+        case .failed: String(localized: "Connection failed")
+        case .testing: String(localized: "Testing…")
+        case .untested: String(localized: "Not yet tested")
         }
     }
 
@@ -363,7 +363,7 @@ struct ProviderEditorView: View {
         if let message = profile.apiTestMessage, !message.isEmpty { return message }
         if let date = profile.apiTestedAt {
             let formatter = RelativeDateTimeFormatter()
-            return "Last run \(formatter.localizedString(for: date, relativeTo: .now))"
+            return String(localized: "Last run \(formatter.localizedString(for: date, relativeTo: .now))")
         }
         return nil
     }
@@ -385,7 +385,7 @@ struct ProviderEditorView: View {
         do {
             let keychain = KeychainStore(accessGroup: KeychainAccessGroup.current())
             try await keychain.save(apiKey, service: SecretSeeder.service, account: profile.id)
-            statusMessage = "API key saved."
+            statusMessage = String(localized: "API key saved.")
         } catch {
             statusMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
@@ -432,8 +432,8 @@ struct SettingsView: View {
             Section("Quick Actions") {
                 LabeledContent("Hotkeys") {
                     HStack(spacing: 12) {
-                        ShortcutChip(label: "Refine", keys: "⌃⌥R")
-                        ShortcutChip(label: "Translate", keys: "⌃⌥T")
+                        ShortcutChip(label: String(localized: "Refine"), keys: "⌃⌥R")
+                        ShortcutChip(label: String(localized: "Translate"), keys: "⌃⌥T")
                     }
                 }
                 Toggle("Show floating action bar near selected text", isOn: $popoverEnabled)

@@ -1,0 +1,46 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "CFBundleDisplayName": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runse"
+          }
+        }
+      }
+    },
+    "Runse Pinyin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runse Pinyin"
+          }
+        }
+      }
+    },
+    "Runse Refine Text": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runse Refine Text"
+          }
+        }
+      }
+    },
+    "Runse Translate Text": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runse Translate Text"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

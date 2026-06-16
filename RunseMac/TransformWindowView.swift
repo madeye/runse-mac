@@ -229,13 +229,13 @@ private struct CommonTargetLanguage: Identifiable {
     var id: String { value }
 
     static let all = [
-        CommonTargetLanguage(title: "English", value: "English"),
-        CommonTargetLanguage(title: "Simplified Chinese", value: "Simplified Chinese"),
-        CommonTargetLanguage(title: "Traditional Chinese", value: "Traditional Chinese"),
-        CommonTargetLanguage(title: "Japanese", value: "Japanese"),
-        CommonTargetLanguage(title: "Korean", value: "Korean"),
-        CommonTargetLanguage(title: "Spanish", value: "Spanish"),
-        CommonTargetLanguage(title: "French", value: "French"),
-        CommonTargetLanguage(title: "German", value: "German")
+        CommonTargetLanguage(title: String(localized: "English"), value: "English"),
+        CommonTargetLanguage(title: String(localized: "Simplified Chinese"), value: "Simplified Chinese"),
+        CommonTargetLanguage(title: String(localized: "Traditional Chinese"), value: "Traditional Chinese"),
+        CommonTargetLanguage(title: String(localized: "Japanese"), value: "Japanese"),
+        CommonTargetLanguage(title: String(localized: "Korean"), value: "Korean"),
+        CommonTargetLanguage(title: String(localized: "Spanish"), value: "Spanish"),
+        CommonTargetLanguage(title: String(localized: "French"), value: "French"),
+        CommonTargetLanguage(title: String(localized: "German"), value: "German")
     ]
 }

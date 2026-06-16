@@ -13,8 +13,10 @@ public enum KeychainError: Error, LocalizedError, Equatable {
 
     public var errorDescription: String? {
         switch self {
-        case .unexpectedStatus(let status): "Keychain error \(status)."
-        case .invalidData: "The saved secret could not be decoded."
+        case .unexpectedStatus(let status):
+            String(localized: "Keychain error \(Int(status)).", bundle: .runseCore)
+        case .invalidData:
+            String(localized: "The saved secret could not be decoded.", bundle: .runseCore)
         }
     }
 }

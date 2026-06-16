@@ -59,13 +59,18 @@ public enum LLMProviderError: Error, LocalizedError, Equatable {
 
     public var errorDescription: String? {
         switch self {
-        case .missingAPIKey: "Missing API key."
-        case .invalidURL: "Invalid provider URL."
-        case .timeout: "The provider request timed out."
-        case .invalidStatus(let code, let body): "Provider returned HTTP \(code): \(body)"
-        case .malformedJSON: "The provider response was malformed."
+        case .missingAPIKey:
+            String(localized: "Missing API key.", bundle: .runseCore)
+        case .invalidURL:
+            String(localized: "Invalid provider URL.", bundle: .runseCore)
+        case .timeout:
+            String(localized: "The provider request timed out.", bundle: .runseCore)
+        case .invalidStatus(let code, let body):
+            String(localized: "Provider returned HTTP \(code): \(body)", bundle: .runseCore)
+        case .malformedJSON:
+            String(localized: "The provider response was malformed.", bundle: .runseCore)
         case .emptyOutput(let snippet):
-            "The provider returned an empty result. Raw: \(snippet)"
+            String(localized: "The provider returned an empty result. Raw: \(snippet)", bundle: .runseCore)
         }
     }
 }

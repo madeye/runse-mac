@@ -1,0 +1,136 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Anthropic Compatible": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anthropic Compatible"
+          }
+        }
+      }
+    },
+    "Anthropic Messages": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anthropic Messages"
+          }
+        }
+      }
+    },
+    "Custom": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom"
+          }
+        }
+      }
+    },
+    "Invalid provider URL.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid provider URL."
+          }
+        }
+      }
+    },
+    "Keychain error %lld.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keychain error %lld."
+          }
+        }
+      }
+    },
+    "Missing API key.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missing API key."
+          }
+        }
+      }
+    },
+    "OpenAI Compatible": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenAI Compatible"
+          }
+        }
+      }
+    },
+    "OpenAI Responses": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenAI Responses"
+          }
+        }
+      }
+    },
+    "Provider returned HTTP %lld: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provider returned HTTP %lld: %@"
+          }
+        }
+      }
+    },
+    "The provider request timed out.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The provider request timed out."
+          }
+        }
+      }
+    },
+    "The provider response was malformed.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The provider response was malformed."
+          }
+        }
+      }
+    },
+    "The provider returned an empty result. Raw: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The provider returned an empty result. Raw: %@"
+          }
+        }
+      }
+    },
+    "The saved secret could not be decoded.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The saved secret could not be decoded."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
