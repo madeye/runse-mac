@@ -46,6 +46,7 @@ targets:
       properties:
         CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
         CFBundleDisplayName: Runse
+        CFBundleName: Runse
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         DefaultNVIDIAAPIKeyObfuscated: $(DEFAULT_NVIDIA_API_KEY_OBFUSCATED)
